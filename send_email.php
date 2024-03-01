@@ -1,76 +1,87 @@
 <?php
+
+require 'vendor/autoload.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'C:\xampp\composer\vendor\autoload.php';
-// require 'vendor\autoload.php';
-
+//use PHPMailer\PHPMailer\SMTP;
 $errors = [];
 $errorMessage = ' ';
 $successMessage = ' ';
-echo 'sending ...';
-if (!empty($_POST))
-{
-echo 'tem coisa no post ...';
-  $name = $_POST['firstName'];
-  $email = $_POST['email'];
-  $message = $_POST['message'];
 
-  if (empty($name)) {
-      $errors[] = 'Name is empty';
-  }
+echo 'Mandando essa bosta...' . "<br/>";
 
-  if (empty($email)) {
-      $errors[] = 'Email is empty';
-  } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      $errors[] = 'Email is invalid';
+if (!empty($_POST)) {
+    echo 'Essa bosta foi reconhecida...' . "<br/>";
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
 
-  }
+    if (empty($name)) {
+        $errors[] = 'Name is empty';
+    }
 
-  if (empty($message)) {
-      $errors[] = 'Message is empty';
-  }
+    if (empty($email)) {
+        $errors[] = 'Email is empty';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Email is invalid';
+    }
 
-  if (!empty($errors)) {
-      $allErrors = join ('<br/>', $errors);
-      echo $allErrors;
-      $errorMessage = "<p style='color: red; '>{$allErrors}</p>";
-  } else {
-    echo 'okay ...';
-      $fromEmail = 'maria.m.cardoso56@gmail.com';
-      $emailSubject = 'New email from your contact form';
+    if (empty($message)) {
+        $errors[] = 'Message is empty';
+    }
 
-      // Create a new PHPMailer instance
-      $mail = new PHPMailer(true);
-      try {
-        echo 'trying ...';
+    if (!empty($errors)) {
+        $allErrors = join('<br/>', $errors);
+        echo $allErrors . "<br/>";
+        $errorMessage = "<p style='color: red; '>{$allErrors}</p>";
+    } else {
+        echo 'Sem erros, a mãe é profissional né more...' . "<br/>";
+        $emailSubject = 'Novo email do site finewinetraveller.com';
+
+        // Create a new PHPMailer instance
+        $mail = new PHPMailer(true);
+        try {
+            echo 'Configurando SMTP, é agora que vai cagar tudo...' . "<br/>";
             // Configure the PHPMailer instance
+            //http://ajuda.clientes.eurotux.com/manuais/blackberry/email_blackberry.html
+            // ou...
+            //http://ajuda.clientes.eurotux.com/manuais/android/email_android.html
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'maria.m.cardoso56@gmail.com';
-            $mail->Password = '6442';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
-           
-            // Set the sender, recipient, subject, and body of the message 
+
+            // Versão final
+            // $mail->Host = 'mail1.clientes.eurotux.com';
+            // $mail->SMTPAuth = true;
+            // $mail->Username = email do finewine;
+            // $mail->Password = password do finewine;
+            // $mail->SMTPSecure = '';
+            // $mail->Port = ;
+
+            // Versão de teste
+            $mail->Host = 'localhost';
+            $mail->SMTPAuth = false; //False só para teste
+            $mail->Username = '';
+            $mail->Password = '';
+            $mail->SMTPSecure = 'Off'; //Off só para teste
+            $mail->Port = 25;
+
+            // Set the sender, recipient, subject, and body of the message
             $mail->setFrom($email);
-            $mail->addAddress($email);
-            $mail->setFrom($fromEmail);
+            $mail->addAddress('contact.us@finewinetraveller.pt');
+            $mail->CharSet = "UTF-8";
             $mail->Subject = $emailSubject;
             $mail->isHTML(true); // Fix: Remove 'isHtml:' parameter
-            $mail->Body = "<p>Name: {$name}</p><p>Email: {$email}</p><p>Message: {$message}</p>";
-         echo 'agora é só mander ...';
+            $mail->Body = "<p>Messagem: {$message}</p><br><p>Favor contatar: {$email},</p><br><p>{$name}.</p>";
+            echo 'Agora é só mandar, agora sim já era...' . "<br/>";
             // Send the message
             $mail->send();
-            echo 'MANDOU PORRA';
-            $successMessage = "<p style='color: green; '>Thank you for contacting us :)</p>";
-      } catch (Exception $e) {
-            $errorMessage = "<p style='color: red; '>Oops, something went wrong. Please try again later</p>";
-            echo $errorMessage;
-      }
-  }
+            $successMessage = "<p style='color: green; '>Thank you for contacting us :)<br>NUNCA DUVIDEI</p>";
+            echo $successMessage . "<br/>";
+        } catch (Exception $e) {
+            $errorMessage =
+            "<p style='color: red; '>Ooooops, something went wrong (っ °Д °;)っ Please try again later</p>";
+            echo $errorMessage . "<br/>";
+        }
+    }
 }
-
-?>
-

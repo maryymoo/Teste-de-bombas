@@ -3,31 +3,35 @@
 <head>
     <title>Teste de Bombas</title>
     <style>
-        /* CSS styles for the form */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
         form {
-            width: 300px;
+            max-width: 400px;
             margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        textarea {
+        input[type="text"] {
             width: 100%;
-            padding: 5px;
+            padding: 10px;
             margin-bottom: 10px;
-            
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
 
-        input[type="submit"] {
+        button[type="submit"] {
             background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
 
@@ -36,30 +40,41 @@
         }
     </style>
 </head>
-<body><!--Essa parte: action="send_email.php" <--aponta para o script php method="post"-->
-    <!-- In this script, the form method is defined with POST, meaning that it should send a POST request to the server. -->
-    <form action="send_email.php" method="post" id="teste-de-bombas-form">
+<body>
+    <form action="send_email.php" method="post" id="form-contacto">
         <label for="name">Name:</label>
-        <!--O required faz o campo ser opcional, e aparece uma mensagem pedindo para preencher-->
-        <input type="text" id="name" name="name" required placeholder="Enter your name">
-
-        <label for="email">Email:</label> 
-        <!--  type="email" verifica se é um email da mensagem pedindo email válido  -->
-        <input type="email" id="email" name="email" required placeholder="Enter your email">
-
-        <label for="message">Message:</label>
-        <textarea id="message" name="message" required placeholder="Enter your message"></textarea>
-
-        <!-- value="Send" é importante -->
-        <input class="g-recaptcha" data-sitekey="6Le4hn0pAAAAAGEujPyIUm8svwIBEN1ulIPa45uq"  data-callback="onSubmit" data-action="submit" type="submit" value="Submit">    
-  
+        <input type="text" id="name" name="name"><br>
+        <label for="email">E-mail:</label>
+        <input type="text" id="email" name="email"><br>
+        <label for="email">Message:</label>
+        <input type="text" id="message" name="message"><br>
+        <button type="submit">Submit</button>
+        <br><br><br><div id="emailStatus"></div>
     </form>
-    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        function onSubmit(token) {
-          document.getElementById("teste-de-bombas-form").submit();
-        }
+    $(document).ready(function(){
+        $("form").on("submit", function(event){
+            event.preventDefault();
+
+            var formData = $(this).serialize();
+            $.ajax({
+                url: "send_email.php",
+                type: "post",
+                data: formData,
+                success: function(response){
+                    $("#emailStatus").html(response).show();
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+    });
+    $(document).on('submit','#form-contacto',function(){
+    $("input").val("");
+    $("textarea").val("");
+});
     </script>
-     
 </body>
 </html>
